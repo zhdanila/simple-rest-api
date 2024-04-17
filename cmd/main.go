@@ -1,8 +1,11 @@
 package main
 
-import todo_list "todo-list"
+import (
+	"log"
+	todo_list "todo-list"
+	"todo-list/internal/handler"
+)
 
-//initialize server
 //set endpoints
 //connect database
 //create repository
@@ -11,5 +14,10 @@ import todo_list "todo-list"
 //init dependency injection
 
 func main() {
+	handlers := new(handler.Handler)
 	srv := new(todo_list.Server)
+
+	if err := srv.Run("8080", handlers.InitRoutes()); err != nil {
+		log.Fatalf("error with running server: %s", err.Error())
+	}
 }
