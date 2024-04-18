@@ -7,10 +7,9 @@ import (
 	todo_list "todo-list"
 	"todo-list/internal/handler"
 	"todo-list/internal/repository"
+	"todo-list/internal/service"
 )
 
-//connect database
-//create repository
 //create service
 //create handler
 //init dependency injection
@@ -20,7 +19,7 @@ func main() {
 		log.Fatalf("error with config file: %s", err.Error())
 	}
 
-	_, err := repository.NewPostgresDB(repository.Config{
+	db, err := repository.NewPostgresDB(repository.Config{
 		Host:     viper.GetString("db.host"),
 		Port:     viper.GetString("db.port"),
 		Username: viper.GetString("db.username"),
@@ -31,7 +30,10 @@ func main() {
 	if err != nil {
 		log.Fatalf("error with connecting to database: %s", err.Error())
 	}
-	handlers := new(handler.Handler)
+
+	repo := repository.NewRepository(db)
+	services := service.NewService(repo)
+	handlers := handler.NewHandler(services)
 	srv := new(todo_list.Server)
 
 	if err := srv.Run("8000", handlers.InitRoutes()); err != nil { // Change port to match your configuration
