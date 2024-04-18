@@ -1,18 +1,16 @@
 package main
 
 import (
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"github.com/spf13/viper"
 	"log"
+	"os"
 	todo_list "todo-list"
 	"todo-list/internal/handler"
 	"todo-list/internal/repository"
 	"todo-list/internal/service"
 )
-
-//create service
-//create handler
-//init dependency injection
 
 func main() {
 	if err := initConfig(); err != nil {
@@ -23,9 +21,9 @@ func main() {
 		Host:     viper.GetString("db.host"),
 		Port:     viper.GetString("db.port"),
 		Username: viper.GetString("db.username"),
-		Password: viper.GetString("db.password"),
 		DBName:   viper.GetString("db.dbname"),
 		SSLMode:  viper.GetString("db.sslmode"),
+		Password: os.Getenv("DB_PASSWORD"),
 	})
 	if err != nil {
 		log.Fatalf("error with connecting to database: %s", err.Error())
@@ -36,7 +34,7 @@ func main() {
 	handlers := handler.NewHandler(services)
 	srv := new(todo_list.Server)
 
-	if err := srv.Run("8000", handlers.InitRoutes()); err != nil { // Change port to match your configuration
+	if err := srv.Run("8000", handlers.InitRoutes()); err != nil {
 		log.Fatalf("error with running server: %s", err.Error())
 	}
 }
@@ -44,5 +42,10 @@ func main() {
 func initConfig() error {
 	viper.AddConfigPath("configs")
 	viper.SetConfigName("config")
+
+	if err := godotenv.Load(); err != nil {
+		log.Fatalf("error with .env file, %s", err.Error())
+	}
+
 	return viper.ReadInConfig()
 }

@@ -15,7 +15,7 @@ func (s *Server) Run(port string, handler http.Handler) error {
 		Handler: handler,
 	}
 
-	fmt.Printf("server started on %s port", port)
+	fmt.Printf("server started on %s port\n", port)
 
 	return s.srv.ListenAndServe()
 }

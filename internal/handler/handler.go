@@ -16,8 +16,8 @@ func NewHandler(services *service.Service) *Handler {
 func (h *Handler) InitRoutes() *http.ServeMux {
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/sign-up", h.SignUp)
-	mux.HandleFunc("/sign-in", h.SignIn)
+	mux.HandleFunc("POST /sign-up", h.SignUp)
+	mux.HandleFunc("POST /sign-in", h.SignIn)
 
 	return mux
 }
