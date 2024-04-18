@@ -7,14 +7,20 @@ import (
 
 type Service struct {
 	Authorization
+	Users
 }
 
 func NewService(repo *repository.Repository) *Service {
 	return &Service{
 		Authorization: NewAuthService(repo),
+		Users: NewUsersService(repo),
 	}
 }
 
 type Authorization interface {
 	SignUp(person models.Person) int
+}
+
+type Users interface {
+	GetAll() ([]models.Person, error)
 }
