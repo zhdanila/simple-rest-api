@@ -23,5 +23,16 @@ func (h *Handler) SignUp(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) SignIn(w http.ResponseWriter, r *http.Request) {
+	var signInPerson models.SignInInput
 
+	err := json.NewDecoder(r.Body).Decode(&signInPerson)
+	if err != nil {
+		NewErrorResponse(w, http.StatusBadRequest, err.Error())
+	}
+
+	token, err := h.services.Authorization.GenerateToken(signInPerson.Username, signInPerson.Password)
+
+	if token == ""{
+
+	}
 }

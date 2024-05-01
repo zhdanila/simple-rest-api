@@ -23,7 +23,5 @@ func(u *UsersRepository) GetAll() ([]models.Person, error) {
 		return nil, err
 	}
 
-	fmt.Println(people)
-
 	return people, nil
 }

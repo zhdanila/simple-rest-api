@@ -13,12 +13,13 @@ type Service struct {
 func NewService(repo *repository.Repository) *Service {
 	return &Service{
 		Authorization: NewAuthService(repo),
-		Users: NewUsersService(repo),
+		Users:         NewUsersService(repo),
 	}
 }
 
 type Authorization interface {
 	SignUp(person models.Person) int
+	GenerateToken(username, password string) (string, error)
 }
 
 type Users interface {

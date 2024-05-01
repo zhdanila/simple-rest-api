@@ -6,3 +6,8 @@ type Person struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
+
+type SignInInput struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
