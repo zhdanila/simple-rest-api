@@ -19,5 +19,7 @@ func (h *Handler) InitRoutes() *http.ServeMux {
 	mux.HandleFunc("POST /sign-up", h.SignUp)
 	mux.HandleFunc("POST /sign-in", h.SignIn)
 
+	mux.HandleFunc("POST /lists/", h.userIdentity(h.CreateList))
+
 	return mux
 }

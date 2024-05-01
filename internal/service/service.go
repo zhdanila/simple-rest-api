@@ -20,6 +20,7 @@ func NewService(repo *repository.Repository) *Service {
 type Authorization interface {
 	SignUp(person models.User) int
 	GenerateToken(username, password string) (string, error)
+	ParseToken(token string) (int, error)
 }
 
 type Users interface {

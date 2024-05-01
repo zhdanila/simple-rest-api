@@ -2,6 +2,7 @@ package service
 
 import (
 	"crypto/sha1"
+	"errors"
 	"fmt"
 	"github.com/golang-jwt/jwt/v5"
 	"strconv"
@@ -10,7 +11,7 @@ import (
 )
 
 const (
-	salt = "asoif30FJ#(F_#IJfolf)#(FPSldjfPO85fdsf"
+	salt       = "asoif30FJ#(F_#IJfolf)#(FPSldjfPO85fdsf"
 	signingKey = "f39iOJF(#UFpo30i_#F{#09ifi)(#"
 )
 
@@ -34,9 +35,7 @@ func generatePasswordHash(password string) string {
 	return fmt.Sprintf("%x", hash.Sum([]byte(salt)))
 }
 
-func(a *AuthService) GenerateToken(username, password string) (string, error) {
-	//todo: get user, validate identity, create token
-
+func (a *AuthService) GenerateToken(username, password string) (string, error) {
 	user, err := a.repo.Authorization.GetUser(username, generatePasswordHash(password))
 	if err != nil {
 		return "", fmt.Errorf("error getting user: %w", err)
@@ -48,5 +47,34 @@ func(a *AuthService) GenerateToken(username, password string) (string, error) {
 
 	signedToken, err := token.SignedString([]byte(signingKey))
 
-	return signedToken, err;
+	return signedToken, err
+}
+
+func (a *AuthService) ParseToken(accessToken string) (int, error) {
+	token, err := jwt.Parse(accessToken, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, errors.New("unexpected signing method")
+		}
+
+		return []byte(signingKey), nil
+	})
+	if err != nil {
+		return 0, err
+	}
+
+	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		subStr, ok := claims["sub"].(string)
+		if !ok {
+			return 0, errors.New("unable to convert 'sub' to string")
+		}
+
+		id, err := strconv.Atoi(subStr)
+		if err != nil {
+			return 0, errors.New("unable to convert 'sub' to int")
+		}
+		fmt.Println(id)
+		return id, nil
+	} else {
+		return 0, errors.New("invalid token")
+	}
 }
