@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"context"
 	"net/http"
 	"strings"
 )
@@ -18,12 +19,13 @@ func (h *Handler) userIdentity(next http.HandlerFunc) http.HandlerFunc {
 			NewErrorResponse(w, http.StatusBadRequest, "invalid auth header")
 			return
 		}
-		_, err := h.services.Authorization.ParseToken(headerParts[1])
+		id, err := h.services.Authorization.ParseToken(headerParts[1])
 		if err != nil {
 			NewErrorResponse(w, http.StatusBadRequest, err.Error())
 			return
 		}
+		ctx := context.WithValue(r.Context(), "userId", id)
 
-		next.ServeHTTP(w, r)
+		next.ServeHTTP(w, r.WithContext(ctx))
 	}
 }

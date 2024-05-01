@@ -72,7 +72,7 @@ func (a *AuthService) ParseToken(accessToken string) (int, error) {
 		if err != nil {
 			return 0, errors.New("unable to convert 'sub' to int")
 		}
-		fmt.Println(id)
+
 		return id, nil
 	} else {
 		return 0, errors.New("invalid token")
