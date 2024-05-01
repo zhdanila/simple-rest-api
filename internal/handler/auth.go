@@ -8,7 +8,7 @@ import (
 )
 
 func (h *Handler) SignUp(w http.ResponseWriter, r *http.Request) {
-	var person models.Person
+	var person models.User
 
 	err := json.NewDecoder(r.Body).Decode(&person)
 	if err != nil {
@@ -31,8 +31,11 @@ func (h *Handler) SignIn(w http.ResponseWriter, r *http.Request) {
 	}
 
 	token, err := h.services.Authorization.GenerateToken(signInPerson.Username, signInPerson.Password)
-
-	if token == ""{
-
+	if err != nil {
+		NewErrorResponse(w, http.StatusBadRequest, err.Error())
+		return
 	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(fmt.Sprintf("token: %s", token)))
 }

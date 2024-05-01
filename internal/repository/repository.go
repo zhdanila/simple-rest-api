@@ -21,9 +21,10 @@ func NewRepository(db *sqlx.DB) *Repository {
 }
 
 type Authorization interface {
-	SignUp(person models.Person) int
+	SignUp(person models.User) int
+	GetUser(username, password string) (models.User, error)
 }
 
 type Users interface {
-	GetAll() ([]models.Person, error)
+
 }
