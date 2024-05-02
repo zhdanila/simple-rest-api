@@ -16,16 +16,16 @@ const (
 )
 
 type AuthService struct {
-	repo *repository.Repository
+	repo repository.Authorization
 }
 
-func NewAuthService(repo *repository.Repository) *AuthService {
+func NewAuthService(repo repository.Authorization) *AuthService {
 	return &AuthService{repo: repo}
 }
 
-func (s *AuthService) SignUp(person models.User) int {
+func (a *AuthService) SignUp(person models.User) int {
 	person.Password = generatePasswordHash(person.Password)
-	return s.repo.SignUp(person)
+	return a.repo.SignUp(person)
 }
 
 func generatePasswordHash(password string) string {
@@ -36,13 +36,13 @@ func generatePasswordHash(password string) string {
 }
 
 func (a *AuthService) GenerateToken(username, password string) (string, error) {
-	user, err := a.repo.Authorization.GetUser(username, generatePasswordHash(password))
+	user, err := a.repo.GetUser(username, generatePasswordHash(password))
 	if err != nil {
 		return "", fmt.Errorf("error getting user: %w", err)
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"sub": strconv.Itoa(user.ID),
+		"sub": strconv.Itoa(user.Id),
 	})
 
 	signedToken, err := token.SignedString([]byte(signingKey))

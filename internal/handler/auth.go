@@ -7,7 +7,7 @@ import (
 	"todo-list/internal/models"
 )
 
-func (h *Handler) SignUp(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) signUp(w http.ResponseWriter, r *http.Request) {
 	var person models.User
 
 	err := json.NewDecoder(r.Body).Decode(&person)
@@ -22,7 +22,7 @@ func (h *Handler) SignUp(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(fmt.Sprintf("person was created, id - %d", id)))
 }
 
-func (h *Handler) SignIn(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) signIn(w http.ResponseWriter, r *http.Request) {
 	var signInPerson models.SignInInput
 
 	err := json.NewDecoder(r.Body).Decode(&signInPerson)
