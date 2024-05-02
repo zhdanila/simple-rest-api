@@ -1,10 +1,15 @@
 REST API Todo app
 
 For this application you need download some dependencies
+
 go get github.com/jmoiron/sqlx - working with PostgreSQl
+
 go get github.com/lib/pq - driver for PostgreSQL
+
 go get github.com/spf13/viper - configuration solution
+
 go get github.com/joho/godotenv - configuration solution
+
 go get -u github.com/golang-jwt/jwt/v5 - library for creating and parsing JWT 
 
 Also, you need to run Docker container with PostgreSQL
