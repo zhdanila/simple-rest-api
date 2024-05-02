@@ -1,6 +1,7 @@
 package todo_list
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 )
@@ -18,4 +19,8 @@ func (s *Server) Run(port string, handler http.Handler) error {
 	fmt.Printf("server started on %s port\n", port)
 
 	return s.srv.ListenAndServe()
+}
+
+func (s *Server) Shutdown(ctx context.Context) error {
+	return s.srv.Shutdown(ctx)
 }

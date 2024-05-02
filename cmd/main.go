@@ -1,11 +1,15 @@
 package main
 
 import (
+	"context"
+	"fmt"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"github.com/spf13/viper"
 	"log"
 	"os"
+	"os/signal"
+	"syscall"
 	todo_list "todo-list"
 	"todo-list/internal/handler"
 	"todo-list/internal/repository"
@@ -34,8 +38,26 @@ func main() {
 	handlers := handler.NewHandler(services)
 	srv := new(todo_list.Server)
 
-	if err := srv.Run("8000", handlers.InitRoutes()); err != nil {
-		log.Fatalf("error with running server: %s", err.Error())
+	go func() {
+		if err := srv.Run("8000", handlers.InitRoutes()); err != nil {
+			log.Fatalf("error with running server: %s", err.Error())
+		}
+	}()
+
+	fmt.Println("TodoApp started")
+
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
+	<- quit
+
+	fmt.Println("TodoApp Shutting Down")
+
+	if err := srv.Shutdown(context.Background()); err != nil {
+		log.Fatalf("error with shutting down server: %s", err.Error())
+	}
+
+	if err := db.Close(); err != nil {
+		log.Fatalf("error with db down: %s", err.Error())
 	}
 }
 
